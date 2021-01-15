@@ -1,0 +1,110 @@
+1 15302016002 苏沃 软件工程 男                
+2 15307100131 叶青 统计学(数据科学与大数据技术方向) 女                
+3 16307110064 王宸 软件工程 男                
+4 16307110476 唐昕悦 软件工程 女                
+5 17302010002 黄元敏 软件工程 男                
+6 17302010003 刘铭涵 软件工程 男                
+7 17302010005 刘海强 软件工程 男                
+8 17302010008 李璠 软件工程 男                
+9 17302010009 陆逸凡 软件工程 男                
+10 17302010011 吴新铭 软件工程 男                
+11 17302010016 金毅铭 软件工程 男                
+12 17302010017 黎沈少杰 软件工程 男
+13 17302010018 周钰承 软件工程 男                
+14 17302010021 林晨 软件工程 男                
+15 17302010022 林国鹏 软件工程 男                
+16 17302010024 俞继涛 软件工程 男                
+17 17302010025 李翀 软件工程 男                
+18 17302010026 邓朋 软件工程 男                
+19 17302010028 李玎善 软件工程 男                
+20 17302010029 卢永强 软件工程 男                
+21 17302010031 王永立 软件工程 男                
+22 17302010033 翟登展 软件工程 男                
+23 17302010034 杜东方 软件工程 男                
+24 17302010035 姜向阳 软件工程 男                
+25 17302010036 石林 软件工程 男                
+26 17302010039 王尚 软件工程 男                
+27 17302010042 夏禹天 软件工程 男                
+28 17302010043 梁伟业 软件工程 男                
+29 17302010048 李江渝 软件工程 男                
+30 17302010049 刘佳兴 软件工程 男                
+31 17302010051 杨辉 软件工程 男                
+32 17302010053 张思源 软件工程 男                
+33 17302010058 王麒迪 软件工程 男                
+34 17302010062 胡彦雯 软件工程 女                
+35 17302010063 黄佳妮 软件工程 女                
+36 17302010065 石睿欣 软件工程 女                
+37 17302010066 吴琛宁 软件工程 女                
+38 17302010067 吴楚盈 软件工程 女                
+39 17302010068 张岑湲 软件工程 女                
+40 17302010070 周君怡 软件工程 女                
+41 17302010072 刘佳楠 软件工程 女                
+42 17302010076 张逸涵 软件工程 女                
+43 17302010077 胡宵宵 软件工程 女                
+44 17302010078 刘书宁 软件工程 女                
+45 17302010079 宋怡景 软件工程 女                
+46 17302010080 黄蕙茹 软件工程 女                
+47 17302010081 罗蓉 软件工程 女                
+48 17307130333 贺曦 软件工程 女
+
+   private ArrayList<ArrayList<Vertex>> DFS() {
+           ArrayList<ArrayList<Vertex>> dfs = new ArrayList<>();
+           for (int j = 0; j < this.numOfVertices; j++) {
+               vertices.get(j).predecessor = new ArrayList<>();
+               vertices.get(j).color = 0;
+           }
+           for (int i = 0; i < vertices.size(); i++) {
+               if (vertices.get(i).color == 0) {
+                   ArrayList<Vertex> arrayList = new ArrayList<>();
+                   DFSVISIT(vertices.get(i), arrayList);
+                   dfs.add(arrayList);
+               }
+           }
+           return dfs;
+       }
+
+       private void DFSVISIT(Vertex u, ArrayList<Vertex> arrayList) {
+           int i = vertices.indexOf(u);
+           u.color = 1;
+           for (int j = 0; j < matrix[i].size(); j++) {
+               Vertex v = vertices.get(matrix[i].get(j));
+               if (v.color == 0) {
+                   v.predecessor.add(u);
+                   DFSVISIT(v, arrayList);
+               }
+           }
+           u.color = 2;
+           arrayList.add(u);
+       }
+
+       public Vertex dagLongestPath() {
+           for (int j = 0; j < this.numOfVertices; j++) {
+               vertices.get(j).pi = null;
+               vertices.get(j).length = Integer.MIN_VALUE;
+           }
+           ArrayList<ArrayList<Vertex>> stack = DFS();
+           int numStack = stack.size();
+           longest = stack.get(numStack - 1).get(stack.get(numStack - 1).size() - 1);
+           longest.length = longest.getWeight();
+           for (int i = 0; i < numStack; i++) {
+               Vertex end = stack.get(i).get(stack.get(i).size() - 1);
+               if (end.length == Integer.MIN_VALUE) {
+                   end.length = end.getWeight();
+               }
+               for (int j = stack.get(i).size() - 1; j >= 0; j--) {
+                   Vertex v = stack.get(i).get(j);
+                   int index = vertices.indexOf(v);
+                   for (int m = 0; m < inmatrix[index].size(); m++) {
+                       Vertex u = vertices.get(inmatrix[index].get(m));
+                       if (u.length < v.length + u.getWeight()) {
+                           u.length = v.length + u.getWeight();
+                       }
+                       if (u.length > longest.length) {
+                           longest = u;
+                           u.pi = v;
+                       }
+                   }
+               }
+           }
+           return longest;
+       }
